@@ -5,7 +5,7 @@
 (generate_opam_files true)
 
 (source
- (github bagnalla/zar))
+ (github bagnalla/ocamlzar))
 
 (authors "Alexander Bagnall")
 
@@ -13,7 +13,7 @@
 
 (license MIT)
 
-(documentation https://github.com/bagnalla/zar)
+(documentation https://github.com/bagnalla/ocamlzar)
 
 (package
  (name zar)

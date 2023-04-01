@@ -1,7 +1,8 @@
 # Zar OCaml: formally verified sampling from discrete probability distributions.
 
 See the related [paper](https://arxiv.org/abs/2211.06747) (to appear
-in PLDI'23) and [Github repository](https://github.com/bagnalla/zar).
+in PLDI'23) and main [Zar Github
+repository](https://github.com/bagnalla/zar).
 
 ## Why use Zar?
 
