@@ -9,9 +9,8 @@ maintainer: ["Alexander Bagnall <abagnalla@gmail.com>"]
 authors: ["Alexander Bagnall"]
 license: "MIT"
 tags: ["zar" "random" "sampler" "verified" "coq" "discrete"]
-homepage: "https://github.com/bagnalla/zar"
-doc: "https://github.com/bagnalla/zar"
-bug-reports: "https://github.com/bagnalla/zar/issues"
+homepage: "https://github.com/bagnalla/ocamlzar"
+bug-reports: "https://github.com/bagnalla/ocamlzar/issues"
 depends: [
   "ocaml"
   "dune" {>= "3.7"}
@@ -31,4 +30,4 @@ build: [
     "@doc" {with-doc}
   ]
 ]
-dev-repo: "git+https://github.com/bagnalla/zar.git"
+dev-repo: "git+https://github.com/bagnalla/ocamlzar.git"

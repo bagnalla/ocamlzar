@@ -13,8 +13,6 @@
 
 (license MIT)
 
-(documentation https://github.com/bagnalla/ocamlzar)
-
 (package
  (name zar)
  (version 0.9)
