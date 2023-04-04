@@ -1,4 +1,5 @@
-open Samplers
+open Internal
+open Stream
 
 exception ZarError of string
 
@@ -36,11 +37,14 @@ let int_of_z = function
 
 let qmake n d = { qnum = z_of_int n; qden = positive_of_int d }
 
-let seed () = Random.self_init ()
-
-(** Run an itree sampler. *) 
-let rec run t =
+(** Run an itree sampler to produce a single sample from a given
+    stream of bits. Returns the unconsumed rest of the stream. *) 
+let rec run t bs =
   match observe t with
-  | RetF x -> x
-  | TauF t' -> run t'
-  | VisF (_, k) -> run (k (Obj.magic (Random.bool ())))
+  | RetF x -> x, bs
+  | TauF t' -> run t' bs
+  | VisF (_, k) -> run (k (Obj.magic (first bs))) (rest bs)
+
+let rec run_forever t bs =
+  let x, bs' = run t bs in
+  SCons (x, fun _ -> run_forever t bs')
