@@ -3,7 +3,7 @@
 See the related [paper](https://arxiv.org/abs/2211.06747) (to appear
 in PLDI'23), the main [Zar Github
 repository](https://github.com/bagnalla/zar), and similar [Haskell
-package](https://github.com/bagnalla/zar/tree/main/haskell/zar).
+package](https://github.com/bagnalla/haskellzar).
 
 ## Why use Zar?
 
