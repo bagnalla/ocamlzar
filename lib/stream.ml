@@ -7,6 +7,3 @@ let first : 'a stream -> 'a = function
 
 let rest : 'a stream -> 'a stream = function
   | SCons (_, s) -> s ()
-
-let rec map (f : 'a -> 'b) : 'a stream -> 'b stream = function
-  | SCons (x, s) -> SCons (f x, fun _ -> map f (s ()))

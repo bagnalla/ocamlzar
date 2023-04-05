@@ -18,7 +18,7 @@
  (version 0.9)
  (synopsis "Formally verified sampling from discrete probability distributions")
  (description "See the [paper](https://arxiv.org/abs/2211.06747) (to appear in PLDI'23) and [Github repository](https://github.com/bagnalla/zar).")
- (depends (ocaml (>= 4.06)) dune (alcotest :with-test) (qcheck :with-test) (qcheck-alcotest :with-test))
+ (depends (ocaml (>= 4.08)) dune (alcotest :with-test) (qcheck :with-test) (qcheck-alcotest :with-test))
  (tags
   (zar random sampler verified coq discrete)))
 

@@ -5,36 +5,36 @@ open Alcotest
 open QCheck_alcotest
 open Zar__Core
 open Zar__Internal
-open Zar__Stream
+open Zar
 
-let rec string_of_list (to_string : 'a -> string) = function
+let rec string_of_list (sep : string) (to_string : 'a -> string) = function
   | [] -> ""
-  | x :: xs -> to_string x ^ " " ^ string_of_list to_string xs
+  | x :: xs -> to_string x ^ sep ^ string_of_list sep to_string xs
 
 (** Check that samplers can build and run. *)
 let () =
   Zar.seed ();
 
-  print_endline @@ string_of_list string_of_bool @@
+  print_endline @@ string_of_list " " string_of_bool @@
     Zar.take 10 @@ Zar.bits ();
-  
+
   (* Coin. *)
   let coin = Zar.coin 2 3 in
   print_endline @@ string_of_bool @@ first coin;
   print_endline @@ string_of_bool @@ first (rest coin);
   print_endline @@ string_of_bool @@ first (rest (rest coin));
   print_endline @@ string_of_bool @@ first (rest (rest (rest coin)));
-  print_endline @@ string_of_list string_of_bool @@ Zar.take 10 coin;
+  print_endline @@ string_of_list " " string_of_bool @@ Zar.take 10 coin;
 
   (* Die. *)
   let die = Zar.die 100 in
   print_endline @@ string_of_int @@ first die;
-  print_endline @@ string_of_list string_of_int @@ Zar.take 10 die;
+  print_endline @@ string_of_list " " string_of_int @@ Zar.take 10 die;
 
   (* Findist. *)
   let findist = Zar.findist [1; 2; 3; 4; 5] in
   print_endline @@ string_of_int @@ first findist;
-  print_endline @@ string_of_list string_of_int @@ Zar.take 10 findist
+  print_endline @@ string_of_list " " string_of_int @@ Zar.take 10 findist
 
 (** Number of samples per QCheck test. *)
 let gen_count = 10000
@@ -63,9 +63,8 @@ let pos_gen =
   sized_size (int_bound @@ Sys.word_size - 3) @@ fix (fun self n ->
                match n with
                | 0 -> return XH
-               | _ -> frequency [1, return XH;
-                                 10, map (fun x -> XO x) (self (n - 1));
-                                 10, map (fun x -> XI x) (self (n - 1))])
+               | _ -> oneof [map (fun x -> XO x) (self (n - 1));
+                             map (fun x -> XI x) (self (n - 1))])
 let z_gen =
   let open QCheck.Gen in
   frequency [1, return Z0;
@@ -120,26 +119,26 @@ let () = add_test "z_of_int" @@
            (check z) "" (Zneg four) (z_of_int (-4));
            (check z) "" (Zneg five) (z_of_int (-5))
 
-(** z_of_int ∘ int_of_z = id *)
+(** z_of_int ∘ int_of_z = id. *)
 let () = add_qcheck @@
            QCheck.Test.make ~name:"z_of_int_int_of_z" ~count:gen_count
              arbitrary_z
              (fun n -> z_of_int (int_of_z n) = n)
 
-(** int_of_z ∘ z_of_int = id *)
+(** int_of_z ∘ z_of_int = id. *)
 let () = add_qcheck @@
            QCheck.(Test.make ~name:"int_of_z_z_of_int" ~count:gen_count
                      (int_range (-bound) bound)
                      (fun n -> int_of_z (z_of_int n) = n))
 
-(** ∀ n m, z_of_int n + z_of_int m = z_of_int (n + m) *)
+(** ∀ n m, z_of_int n + z_of_int m = z_of_int (n + m). *)
 let () = add_qcheck @@
            QCheck.(Test.make ~name:"z_of_int_plus" ~count:gen_count
                      (pair (int_range (-bound) bound) (int_range (-bound) bound))
                      (fun (n, m) -> Z.add (z_of_int n) (z_of_int m)
                                     = z_of_int (n + m)))
 
-(** ∀ n m, int_of_z n + int_of_z m = int_of_z (n + m) *)
+(** ∀ n m, int_of_z n + int_of_z m = int_of_z (n + m). *)
 let () = add_qcheck @@
            QCheck.(Test.make ~name:"int_of_z_plus" ~count:gen_count
                      (pair arbitrary_z arbitrary_z)
@@ -170,6 +169,10 @@ let () = add_qcheck @@
                      (pair (int_range (-bound) (bound))
                         (int_range (-bound) (bound)))
                      (fun (n, m) -> n < m == Z.ltb (z_of_int n) (z_of_int m)))
+
+(* let () = *)
+(*   let zs = QCheck.Gen.generate ~n:20 z_gen in *)
+(*   print_endline @@ string_of_list "\n" string_of_z zs *)
 
 (** Run unit tests. *)
 let () = Alcotest.run "zar" [ "zar", !tests ]
