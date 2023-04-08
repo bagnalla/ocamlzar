@@ -1,32 +1,12 @@
-
 open Core
 open Internal
-open Stream
-
-let first : 'a stream -> 'a = first
-
-let rest : 'a stream -> 'a stream = rest
-
-let take (n : int) : 'a stream -> 'a list =
-  let rec go (acc : 'a list) (i : int) (s : 'a stream) : 'a list =
-    if i <= 0 then acc else (go [@tailcall]) (first s :: acc) (i-1) (rest s)
-  in go [] n
-
-let rec drop (n : int) (s : 'a stream) : 'a stream =
-  if n <= 0 then s else (drop [@tailcall]) (n-1) (rest s)
-
-let rec map (f : 'a -> 'b) : 'a stream -> 'b stream = function
-  | SCons (x, s) -> SCons (f x, fun _ -> map f (s ()))
-
-let scons (x : 'a) (xs : 'a stream) : 'a stream =
-  SCons (x, fun _ -> xs)
+include Stream
 
 (**********************************************************************)
 
-let seed = Random.self_init
-
-(** Default stream of uniformly distributed random bits. *)
 let rec bits () : bool stream = SCons (Random.bool (), bits)
+
+let seed = Random.self_init
 
 let coin_transformer n d bs =
   if n < 0 then
