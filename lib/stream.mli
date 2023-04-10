@@ -17,5 +17,5 @@ val drop : int -> 'a stream -> 'a stream
 (** Map a function over a stream. *)
 val map : ('a -> 'b) -> 'a stream -> 'b stream
 
-(** Stream constructor. *)
+(** Build a stream from a head and tail. *)
 val scons : 'a -> 'a stream -> 'a stream

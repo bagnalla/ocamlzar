@@ -1,3 +1,7 @@
+## 0.9.2 (2023-04-10)
+
+* API change: include Stream module in root Zar module.
+  
 ## 0.9.1 (2023-04-04)
 
 * Fix qcheck tests for 32-bit systems and reorganize modules and
