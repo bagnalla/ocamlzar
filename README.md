@@ -1,6 +1,6 @@
 # Zar OCaml: formally verified sampling from discrete probability distributions.
 
-See the related [paper](https://arxiv.org/abs/2211.06747) (to appear
+See the related [paper](https://arxiv.org/abs/2211.06747) (appeared
 in PLDI'23), the main [Zar Github
 repository](https://github.com/bagnalla/zar) and similar [Haskell
 package](https://github.com/bagnalla/haskellzar), and [blog
@@ -71,7 +71,7 @@ of values with equal (uniform) probability of each. An old trick for
 drawing an integer uniformly from the range `[0, n)` is to generate a
 random integer from `[0, RAND_MAX]` and take the modulus wrt. `n`:
 ```C
-k = rand() // n # Assign k random value from [0,n)
+k = rand() % n // Assign to k a random integer from [0,n)
 // do something with k
 ```
 but this method suffers from modulo bias when `n` is not a power of 2,
@@ -213,11 +213,11 @@ the default source of uniformly distributed random bits.
 The samplers here are optimized for sampling performance at the
 expense of build time. Thus, this library not be ideal if your use
 case involves frequent rebuilding due to changes in the samplers'
-parameters (e.g., the coin bias or the number of sides of the
+parameters (e.g., the coin's bias or the number of sides of the
 die). For example, in our experiments it takes ~0.22s to build a
 100000-sided die and 1.83s to build a 500000-sided die, but only
 ~1.85s and ~2.19s respectively to generate one million samples from
-them.
+each.
 
 The size of the in-memory representation of a coin with bias `p = num
 / denom` is proportional to `denom` (after bringing the fraction to
