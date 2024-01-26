@@ -118,9 +118,9 @@ and extracted to OCaml for execution. Validity of the correctness
 proofs is thus dependent on the correctness of Coq's extraction
 mechanism, the OCaml compiler and runtime, and a small amount of OCaml
 shim code (viewable
-[here](https://github.com/bagnalla/zar/blob/main/ocaml/zar/lib/core.ml)
+[here](https://github.com/bagnalla/ocamlzar/blob/main/lib/core.ml)
 and thoroughly tested with QCheck
-[here](https://github.com/bagnalla/zar/blob/main/ocaml/zar/test/zar.ml)),
+[here](https://github.com/bagnalla/ocamlzar/blob/main/test/zar.ml)),
 
 ## Proofs of Correctness
 
