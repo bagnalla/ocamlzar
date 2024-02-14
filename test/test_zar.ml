@@ -170,6 +170,38 @@ let () = add_qcheck @@
                         (int_range (-bound) (bound)))
                      (fun (n, m) -> n < m == Z.ltb (z_of_int n) (z_of_int m)))
 
+(* Zar.take *)
+
+(* Using big enough numbers to ensure the chance of randomly generating the same
+   sequence twice is low enough to be effectively zero. *)
+let () = add_qcheck @@
+           let () = Random.self_init () in
+           let die = Zar.die 10_000 in
+           QCheck.Test.make ~count:1000
+             ~name:"repeated calls to [take] return different value streams with the same first value"
+             (QCheck.int_range 50 100)
+             (fun n ->
+               let sample1 = Zar.take n die |> Array.of_list in
+               let sample2 = Zar.take n die |> Array.of_list in
+               (* "First" value is the same. *)
+               sample1.(n - 1) = sample2.(n - 1) &&
+                 (* But the stream of values are different. *)
+                 sample1 <> sample2)
+
+let () = add_qcheck @@
+           let () = Random.self_init () in
+           let die = Zar.die 10_000 in
+           QCheck.Test.make ~count:1000
+             ~name:"seeding [Random.init] with same seed returns same stream"
+             QCheck.(tup2 (int_range 1 100) (int_range 1 999999))
+             (fun (n, seed) ->
+               Random.init seed;
+               let sample1 = Zar.take n die in
+               Random.init seed;
+               let sample2 = Zar.take n die in
+               sample1 = sample2)
+
+
 (* let () = *)
 (*   let zs = QCheck.Gen.generate ~n:20 z_gen in *)
 (*   print_endline @@ string_of_list "\n" string_of_z zs *)
