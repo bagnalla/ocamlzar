@@ -1,7 +1,9 @@
 open Internal
-open Stream
 
 exception ZarError of string
+
+let first = Stream.first
+let rest = Stream.rest
 
 let positive_of_int (i : int) : positive =
   if i < 1 then
