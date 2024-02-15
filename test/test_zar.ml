@@ -6,7 +6,7 @@ open QCheck_alcotest
 open Zar__Core
 open Zar__Internal
 
-let take = Zar__.Seq_ext.take_list
+let take = Zar.take_list
 
 (** Number of samples per QCheck test. *)
 let gen_count = 10000
