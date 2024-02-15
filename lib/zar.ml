@@ -4,7 +4,7 @@ include Stream
 
 (**********************************************************************)
 
-let rec bits () : bool stream = SCons (Random.bool (), bits)
+let bits () : bool stream = Seq.forever Random.bool
 
 let seed = Random.self_init
 

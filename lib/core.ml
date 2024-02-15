@@ -38,7 +38,7 @@ let int_of_z = function
 let qmake n d = { qnum = z_of_int n; qden = positive_of_int d }
 
 (** Run an itree sampler to produce a single sample from a given
-    stream of bits. Returns the unconsumed rest of the stream. *) 
+    stream of bits. Returns the unconsumed rest of the stream. *)
 let rec run t bs =
   match observe t with
   | RetF x -> x, bs
@@ -47,4 +47,4 @@ let rec run t bs =
 
 let rec run_forever t bs =
   let x, bs' = run t bs in
-  SCons (x, fun _ -> run_forever t bs')
+  (fun () -> Seq.Cons (x, run_forever t bs'))

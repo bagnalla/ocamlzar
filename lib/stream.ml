@@ -1,22 +1,25 @@
-type 'a stream =
-  | SCons of 'a * (unit -> 'a stream)
+type 'a stream = 'a Seq.t
 
-let first : 'a stream -> 'a = function
-  | SCons (x, _) -> x
+let first : 'a stream -> 'a = fun stream ->
+  match stream () with
+  | Seq.Cons (x, _) -> x
+  (* Original streams were never empty. *)
+  | Nil -> assert false
 
-let rest : 'a stream -> 'a stream = function
-  | SCons (_, s) -> s ()
+let rest : 'a stream -> 'a stream = fun stream ->
+  match stream () with
+  | Seq.Cons (_, xs) -> xs
+  (* Original streams were never empty. *)
+  | Nil -> assert false
 
-let take (n : int) : 'a stream -> 'a list =
-  let rec go (acc : 'a list) (i : int) (s : 'a stream) : 'a list =
-    if i <= 0 then acc else (go [@tailcall]) (first s :: acc) (i-1) (rest s)
-  in go [] n
+(* Reverse the list to match original behavior. *)
+let take n s = Seq.take n s |> List.of_seq |> List.rev
 
 let rec drop (n : int) (s : 'a stream) : 'a stream =
   if n <= 0 then s else (drop [@tailcall]) (n-1) (rest s)
 
-let rec map (f : 'a -> 'b) : 'a stream -> 'b stream = function
-  | SCons (x, s) -> SCons (f x, fun _ -> map f (s ()))
+let map (f : 'a -> 'b) : 'a stream -> 'b stream = fun stream ->
+  Seq.map f stream
 
 let scons (x : 'a) (xs : 'a stream) : 'a stream =
-  SCons (x, fun _ -> xs)
+  Seq.cons x xs

@@ -1,6 +1,5 @@
 (** Streams / Lazy infinite lists. *)
-type 'a stream =
-  | SCons of 'a * (unit -> 'a stream)
+type 'a stream = 'a Seq.t
 
 (** First element (head) of a stream. *)
 val first : 'a stream -> 'a
