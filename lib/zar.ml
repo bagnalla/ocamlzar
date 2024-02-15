@@ -36,3 +36,5 @@ let coin n d = coin_transformer n d @@ bits ()
 let die n = die_transformer n @@ bits ()
 
 let findist weights = findist_transformer weights @@ bits ()
+
+include Seq_ext

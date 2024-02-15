@@ -21,3 +21,5 @@ val die : int -> int Seq.t
 
 (** Findist stream (applied to bits). *)
 val findist : int list -> int Seq.t
+
+include module type of Seq_ext
