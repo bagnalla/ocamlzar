@@ -1,4 +1,4 @@
-let take = Zar.take_list
+let take_list = Zar.take_list
 let first = Zar.first
 let rest = Zar.rest
 
@@ -12,7 +12,7 @@ let () =
 
   print_endline "====== bits";
   print_endline @@ String.trim @@ string_of_list " " string_of_bool @@
-    take 10 @@ Zar.bits ();
+    take_list 10 @@ Zar.bits ();
 
   (* Coin. *)
   print_endline "\n====== coin";
@@ -21,16 +21,16 @@ let () =
   print_endline @@ string_of_bool @@ first (rest coin);
   print_endline @@ string_of_bool @@ first (rest (rest coin));
   print_endline @@ string_of_bool @@ first (rest (rest (rest coin)));
-  print_endline @@ String.trim @@ string_of_list " " string_of_bool @@ take 10 coin;
+  print_endline @@ String.trim @@ string_of_list " " string_of_bool @@ take_list 10 coin;
 
   (* Die. *)
   print_endline "\n====== die";
   let die = Zar.die 100 in
   print_endline @@ string_of_int @@ first die;
-  print_endline @@ String.trim @@ string_of_list " " string_of_int @@ take 10 die;
+  print_endline @@ String.trim @@ string_of_list " " string_of_int @@ take_list 10 die;
 
   (* Findist. *)
   print_endline "\n====== findist";
   let findist = Zar.findist [1; 2; 3; 4; 5] in
   print_endline @@ string_of_int @@ first findist;
-  print_endline @@ String.trim @@ string_of_list " " string_of_int @@ take 10 findist
+  print_endline @@ String.trim @@ string_of_list " " string_of_int @@ take_list 10 findist

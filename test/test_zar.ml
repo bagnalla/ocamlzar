@@ -6,7 +6,7 @@ open QCheck_alcotest
 open Zar__Core
 open Zar__Internal
 
-let take = Zar.take_list
+let take_list = Zar.take_list
 
 (** Number of samples per QCheck test. *)
 let gen_count = 10000
@@ -148,11 +148,11 @@ let () = add_qcheck @@
            let () = Random.self_init () in
            let die = Zar.die 10_000 in
            QCheck.Test.make ~count:1000
-             ~name:"repeated calls to [take] return different value streams with the same first value"
+             ~name:"repeated calls to [take_list] return different value streams with the same first value"
              (QCheck.int_range 50 100)
              (fun n ->
-               let sample1 = take n die |> Array.of_list in
-               let sample2 = take n die |> Array.of_list in
+               let sample1 = take_list n die |> Array.of_list in
+               let sample2 = take_list n die |> Array.of_list in
                (* "First" value is the same. *)
                sample1.(n - 1) = sample2.(n - 1) &&
                  (* But the stream of values are different. *)
@@ -166,9 +166,9 @@ let () = add_qcheck @@
              QCheck.(tup2 (int_range 1 100) (int_range 1 999999))
              (fun (n, seed) ->
                Random.init seed;
-               let sample1 = take n die in
+               let sample1 = take_list n die in
                Random.init seed;
-               let sample2 = take n die in
+               let sample2 = take_list n die in
                sample1 = sample2)
 
 
