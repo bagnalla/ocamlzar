@@ -1,5 +1,4 @@
 open Internal
-open Stream
 
 exception ZarError of string
 
@@ -20,5 +19,5 @@ val int_of_z : z -> int
     respectively and build a q (internal representation of rationals). *)
 val qmake : int -> int -> q
 
-(** Run an itree sampler. *) 
-val run_forever : (__, 'a) itree -> bool stream -> 'a stream
+(** Run an itree sampler. *)
+val run_forever : (__, 'a) itree -> bool Seq.t -> 'a Seq.t

@@ -3,10 +3,7 @@ open Internal
 
 (**********************************************************************)
 
-type 'a stream = 'a Stream.stream
-let map = Stream.map
-
-let bits () : bool stream = Seq.forever Random.bool
+let bits () : bool Seq.t = Seq.forever Random.bool
 
 let seed = Random.self_init
 
@@ -22,7 +19,7 @@ let die_transformer n bs =
   if n <= 0 then
     raise (ZarError "die_transformer: n must be positive")
   else
-    map int_of_z @@
+    Seq.map int_of_z @@
       run_forever (samplers.die_sampler @@ z_of_int n) bs
 
 let findist_transformer weights bs =
@@ -31,7 +28,7 @@ let findist_transformer weights bs =
   else if List.for_all (fun w -> w <= 0) weights then
     raise (ZarError "findist_transformer: at least one weight must be positive")
   else
-    map int_of_z @@
+    Seq.map int_of_z @@
       run_forever (samplers.findist_sampler @@ List.map z_of_int weights) bs
 
 let coin n d = coin_transformer n d @@ bits ()

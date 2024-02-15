@@ -2,9 +2,6 @@ open Internal
 
 exception ZarError of string
 
-let first = Stream.first
-let rest = Stream.rest
-
 let positive_of_int (i : int) : positive =
   if i < 1 then
     raise (ZarError ("positive_of_int: int must be positive, got "
@@ -45,7 +42,7 @@ let rec run t bs =
   match observe t with
   | RetF x -> x, bs
   | TauF t' -> run t' bs
-  | VisF (_, k) -> run (k (Obj.magic (first bs))) (rest bs)
+  | VisF (_, k) -> run (k (Obj.magic (Seq_ext.first bs))) (Seq_ext.rest bs)
 
 let rec run_forever t bs =
   let x, bs' = run t bs in

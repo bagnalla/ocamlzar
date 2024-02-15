@@ -1,6 +1,6 @@
-let take = Zar__.Stream.take
-let first = Zar__.Stream.first
-let rest = Zar__.Stream.rest
+let take = Zar__.Seq_ext.take_list
+let first = Zar__.Seq_ext.first
+let rest = Zar__.Seq_ext.rest
 
 let rec string_of_list (sep : string) (to_string : 'a -> string) = function
   | [] -> ""
