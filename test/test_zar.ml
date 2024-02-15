@@ -5,36 +5,6 @@ open Alcotest
 open QCheck_alcotest
 open Zar__Core
 open Zar__Internal
-open Zar
-
-let rec string_of_list (sep : string) (to_string : 'a -> string) = function
-  | [] -> ""
-  | x :: xs -> to_string x ^ sep ^ string_of_list sep to_string xs
-
-(** Check that samplers can build and run. *)
-let () =
-  Zar.seed ();
-
-  print_endline @@ string_of_list " " string_of_bool @@
-    Zar.take 10 @@ Zar.bits ();
-
-  (* Coin. *)
-  let coin = Zar.coin 2 3 in
-  print_endline @@ string_of_bool @@ first coin;
-  print_endline @@ string_of_bool @@ first (rest coin);
-  print_endline @@ string_of_bool @@ first (rest (rest coin));
-  print_endline @@ string_of_bool @@ first (rest (rest (rest coin)));
-  print_endline @@ string_of_list " " string_of_bool @@ Zar.take 10 coin;
-
-  (* Die. *)
-  let die = Zar.die 100 in
-  print_endline @@ string_of_int @@ first die;
-  print_endline @@ string_of_list " " string_of_int @@ Zar.take 10 die;
-
-  (* Findist. *)
-  let findist = Zar.findist [1; 2; 3; 4; 5] in
-  print_endline @@ string_of_int @@ first findist;
-  print_endline @@ string_of_list " " string_of_int @@ Zar.take 10 findist
 
 (** Number of samples per QCheck test. *)
 let gen_count = 10000

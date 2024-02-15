@@ -1,3 +1,3 @@
-(test
- (name test_zar)
+(tests
+ (names test_basics test_zar)
  (libraries zar alcotest qcheck qcheck-alcotest))
