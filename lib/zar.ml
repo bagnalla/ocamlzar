@@ -1,8 +1,10 @@
 open Core
 open Internal
-include Stream
 
 (**********************************************************************)
+
+type 'a stream = 'a Stream.stream
+let map = Stream.map
 
 let bits () : bool stream = Seq.forever Random.bool
 

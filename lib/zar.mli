@@ -1,6 +1,4 @@
-include module type of Stream
-
-(**********************************************************************)
+type 'a stream = 'a Stream.stream
 
 (** Default implementation of uniformly distributed random bit stream. *)
 val bits : unit -> bool stream
