@@ -1,27 +1,25 @@
-include module type of Stream
-
-(**********************************************************************)
-
 (** Default implementation of uniformly distributed random bit stream. *)
-val bits : unit -> bool stream
+val bits : unit -> bool Seq.t
 
 (** Initialize PRNG used for default implementation of bit stream. *)
 val seed : unit -> unit
 
 (** Coin stream transformer. *)
-val coin_transformer : int -> int -> bool stream -> bool stream
+val coin_transformer : int -> int -> bool Seq.t -> bool Seq.t
 
 (** Die stream transformer. *)
-val die_transformer : int -> bool stream -> int stream
+val die_transformer : int -> bool Seq.t -> int Seq.t
 
 (** Findist stream transformer. *)
-val findist_transformer : int list -> bool stream -> int stream
+val findist_transformer : int list -> bool Seq.t -> int Seq.t
 
 (** Coin stream (applied to bits). *)
-val coin : int -> int -> bool stream
+val coin : int -> int -> bool Seq.t
 
 (** Die stream (applied to bits). *)
-val die : int -> int stream
+val die : int -> int Seq.t
 
 (** Findist stream (applied to bits). *)
-val findist : int list -> int stream
+val findist : int list -> int Seq.t
+
+include module type of Seq_ext

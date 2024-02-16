@@ -1,5 +1,4 @@
 open Internal
-open Stream
 
 exception ZarError of string
 
@@ -38,13 +37,13 @@ let int_of_z = function
 let qmake n d = { qnum = z_of_int n; qden = positive_of_int d }
 
 (** Run an itree sampler to produce a single sample from a given
-    stream of bits. Returns the unconsumed rest of the stream. *) 
+    stream of bits. Returns the unconsumed rest of the stream. *)
 let rec run t bs =
   match observe t with
   | RetF x -> x, bs
   | TauF t' -> run t' bs
-  | VisF (_, k) -> run (k (Obj.magic (first bs))) (rest bs)
+  | VisF (_, k) -> run (k (Obj.magic (Seq_ext.first bs))) (Seq_ext.rest bs)
 
 let rec run_forever t bs =
   let x, bs' = run t bs in
-  SCons (x, fun _ -> run_forever t bs')
+  (fun () -> Seq.Cons (x, run_forever t bs'))
