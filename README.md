@@ -31,9 +31,8 @@ Zar provides an alternative that is formally proved (in Coq) to
 execute `a1` with probability `p` (where `num` and `denom` are integers such
 that `p = num / denom`):
 ```ocaml
-let coin = Zar.coin num denom in (* Build coin sampler *)
-if coin#gen () (* Look at first flip of the coin *)
-  then a1 else a2
+let coin = Zar.coin num denom in (* Build coin sampler. *)
+if coin#gen () then a1 else a2
 ```
 
 The expression `Zar.coin num denom` builds a sampler object that flips
@@ -50,8 +49,7 @@ consuming elements from the stream. The following code is equivalent:
 ```ocaml
 let coin_stream = Zar.bits () |> Zar.coin_transformer num denom in
 let coin = new Zar.sampler coin_stream in
-if coin#gen () (* Look at first flip of the coin *)
-  then a1 else a2
+if coin#gen () then a1 else a2
 ```
 
 The user has the option to apply the coin transformer to their own
@@ -66,8 +64,8 @@ of values with equal (uniform) probability of each. An old trick for
 drawing an integer uniformly from the range `[0, n)` is to generate a
 random integer from `[0, RAND_MAX]` and take the modulus wrt. `n`:
 ```C
-k = rand() % n // Assign to k a random integer from [0,n)
-// do something with k
+k = rand() % n // Assign to k a random integer from [0,n).
+// Do something with k.
 ```
 but this method suffers from modulo bias when `n` is not a power of 2,
 causing some values to occur with higher probability than others (see,
@@ -78,8 +76,8 @@ that is guaranteed for any integer `0 < n` to generate samples from
 the range `[0,n)` with probability `1/n` each:
 ```ocaml
 let die = Zar.die n in
-let k = die#gen () in (* k drawn uniformly from [0,n) *)
-(* do something with k *)
+let k = die#gen () in (* Draw k uniformly from [0,n). *)
+(* Do something with k. *)
 ```
 
 Although the OCaml function `Random.int` is ostensibly free from
@@ -98,8 +96,7 @@ normalized by the sum of all weights):
 ```ocaml
 let findist = Zar.findist weights in
 let k = findist#gen () in
-(* do something with k *)
-...
+(* Do something with k. *)
 ```
 
 For example, `Zar.findist [1; 3; 2]` builds a sampler that draws
