@@ -1,17 +1,14 @@
 ====== bits
-true true true true true true true false false false
+10
 
 ====== coin
-true
-true
-true
-true
-true true true false true true true false true true
+10
 
 ====== die
-97
-9 38 31 75 14 57 93 82 74 97
+10
 
 ====== findist
-2
-3 3 3 3 3 3 4 4 4 2
+10
+
+====== die sampler
+10

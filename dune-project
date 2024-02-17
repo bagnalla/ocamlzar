@@ -15,7 +15,7 @@
 
 (package
  (name zar)
- (version 0.9)
+ (version 0.9.3)
  (synopsis "Formally verified sampling from discrete probability distributions")
  (description "See the [paper](https://arxiv.org/abs/2211.06747) (to appear in PLDI'23) and [Github repository](https://github.com/bagnalla/zar).")
  (depends (ocaml (>= 4.08)) dune (alcotest :with-test) (qcheck :with-test) (qcheck-alcotest :with-test))

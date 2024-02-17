@@ -31,31 +31,27 @@ Zar provides an alternative that is formally proved (in Coq) to
 execute `a1` with probability `p` (where `num` and `denom` are integers such
 that `p = num / denom`):
 ```ocaml
-let coin_stream = Zar.coin num denom in (* Build coin stream *)
-if Zar.first coin_stream (* Look at first flip of the coin *)
+let coin = Zar.coin num denom in (* Build coin sampler *)
+if coin#gen () (* Look at first flip of the coin *)
   then a1 else a2
 ```
 
-The expression `Zar.coin num denom` builds a stream of `bool`s
-resulting from flipping the coin with bias `p = num / denom`. See
-[lib/stream.mli](stream/mli) for the stream type interface. We may
-integrate with an existing library in the future (e.g.,
-[streaming](https://ocaml.org/p/streaming/0.8.0/doc/index.html))
-similar to the [Zar Haskell
-package](https://github.com/bagnalla/zar/tree/main/haskell/zar)'s
-integration with the
-[pipes](https://hackage.haskell.org/package/pipes) library.
-
-Internally, the coin is constructed as a stream transformer of type
-`bool stream -> bool stream` that transforms an input source of fair
-coin flips into an output stream of biased coin flips. The coin
-transformer is applied to a default source of fair coin flips based on
-the OCaml Random module. The following code is equivalent:
+The expression `Zar.coin num denom` builds a sampler object that flips
+a coin with bias `p = num / denom`. Internally, the coin is
+constructed as a stream transformer of type `bool Seq.t -> bool Seq.t`
+(see [OCaml's lazy sequence
+library](https://v2.ocaml.org/api/Seq.html)) that transforms an input
+source of fair coin flips into an output stream of biased coin
+flips. The coin transformer is applied to a default source of fair
+coin flips based on the OCaml Random module, and then wrapped in a
+stateful `sampler` object that provides a simplified interface for
+consuming elements from the stream. The following code is equivalent:
 
 ```ocaml
-let coin_transformer = Zar.coin_transformer num denom
-let coin_stream = coin_transformer (Zar.bits ())
-if Zar.first coin_stream (* Look at first flip of the coin *)
+let coin_transformer = Zar.coin_transformer num denom in
+let coin_stream = coin_transformer (Zar.bits ()) in
+let coin = new Zar.sampler coin_stream in
+if coin#gen () (* Look at first flip of the coin *)
   then a1 else a2
 ```
 
@@ -83,7 +79,7 @@ that is guaranteed for any integer `0 < n` to generate samples from
 the range `[0,n)` with probability `1/n` each:
 ```ocaml
 let die = Zar.die n in
-let k = Zar.first die in (* k drawn uniformly from [0,n) *)
+let k = die#gen () in (* k drawn uniformly from [0,n) *)
 (* do something with k *)
 ```
 
@@ -102,7 +98,7 @@ probability `weightsₖ / ∑ⱼweightsⱼ` (the corresponding weight of `k`
 normalized by the sum of all weights):
 ```ocaml
 let findist = Zar.findist weights in
-let k = Findist.sample () in
+let k = findist#gen () in
 (* do something with k *)
 ...
 ```
@@ -174,8 +170,10 @@ See [zar.mli](lib/zar.mli) for the top-level interface.
 
 `Zar.bits ()` produces a stream of uniformly distributed random bits.
 
-`Zar.seed ()` initializes the PRNG for `Zar.bits` (currently just
+`Zar.self_init ()` initializes the PRNG for `Zar.bits` (currently just
 calls [Random.self_init](https://v2.ocaml.org/api/Random.html)).
+
+`Zar.init n` initializes the PRNG for `Zar.bits` with a given seed.
 
 ### Biased Coin
 
@@ -184,8 +182,11 @@ applied to a stream of uniformly distributed random bits generates
 `bool` samples with `Pr(True) = num/denom`. Requires `0 <= num <
 denom` and `0 < denom`.
 
-`Zar.coin num denom` composes `Zar.coin_transformer num denom` with
-the default source of uniformly distributed random bits.
+`Zar.coin_stream num denom` composes `Zar.coin_transformer num denom`
+with the default source of uniformly distributed random bits.
+
+`Zar.coin num denom` builds a sampler object over the stream produced
+by `Zar.coin_stream num denom`.
 
 ### N-sided Die
 
@@ -193,8 +194,11 @@ the default source of uniformly distributed random bits.
 to a stream of uniformly distributed random bits generates `int`
 samples with `Pr(m) = 1/n` for integer m where `0 <= m < n` .
 
-`Zar.die n` composes `Zar.die_transformer n` with the default source
-of uniformly distributed random bits.
+`Zar.die_stream n` composes `Zar.die_transformer n` with the default
+source of uniformly distributed random bits.
+
+`Zar.die n` builds a sampler object over the stream produced by
+`Zar.die_stream n`.
 
 ### Finite Distribution
 
@@ -205,19 +209,18 @@ random bits generates `int` samples with `Pr(i) = weightsᵢ /
 ∑ⱼweightsⱼ` for integer `0 <= i <
 |weights|`.
 
-`Zar.findist weights` composes `Zar.findist_transformer weights` with
-the default source of uniformly distributed random bits.
+`Zar.findist_stream weights` composes `Zar.findist_transformer
+weights` with the default source of uniformly distributed random bits.
+
+`Zar.findist weights` builds a sampler object over the stream produced
+by `Zar.findist_stream weights`.
 
 ## Performance and Limitations
 
 The samplers here are optimized for sampling performance at the
 expense of build time. Thus, this library not be ideal if your use
 case involves frequent rebuilding due to changes in the samplers'
-parameters (e.g., the coin's bias or the number of sides of the
-die). For example, in our experiments it takes ~0.22s to build a
-100000-sided die and 1.83s to build a 500000-sided die, but only
-~1.85s and ~2.19s respectively to generate one million samples from
-each.
+parameters (e.g., the coin's bias or the number of sides of the die).
 
 The size of the in-memory representation of a coin with bias `p = num
 / denom` is proportional to `denom` (after bringing the fraction to
@@ -227,3 +230,8 @@ formal results we provide are partial in the sense that they only
 apply to samplers that execute without running out of memory. I.e., we
 do not provide any guarantees against stack overflow or out-of-memory
 errors when, e.g., `n` is too large.
+
+## Acknowledgments
+
+Thanks to [mooreryan](https://github.com/mooreryan) for comments and
+code contributions.

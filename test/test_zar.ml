@@ -6,7 +6,7 @@ open QCheck_alcotest
 open Zar__Core
 open Zar__Internal
 
-let take_list = Zar.take_list
+(* let take_list = Zar.take_list *)
 
 (** Number of samples per QCheck test. *)
 let gen_count = 10000
@@ -142,39 +142,31 @@ let () = add_qcheck @@
                         (int_range (-bound) (bound)))
                      (fun (n, m) -> n < m == Z.ltb (z_of_int n) (z_of_int m)))
 
-(* Using big enough numbers to ensure the chance of randomly generating the same
-   sequence twice is low enough to be effectively zero. *)
+(** A stream of samples produces the same samples when viewed multiple times. *)
 let () = add_qcheck @@
            let () = Random.self_init () in
-           let die = Zar.die 10_000 in
+           let die = Zar.die_stream 10_000 in
            QCheck.Test.make ~count:1000
-             ~name:"repeated calls to [take_list] return different value streams with the same first value"
+             ~name:"streams_memoized"
              (QCheck.int_range 50 100)
              (fun n ->
-               let sample1 = take_list n die |> Array.of_list in
-               let sample2 = take_list n die |> Array.of_list in
-               (* "First" value is the same. *)
-               sample1.(n - 1) = sample2.(n - 1) &&
-                 (* But the stream of values are different. *)
-                 sample1 <> sample2)
+               let sample1 = Seq.take n die in
+               let sample2 = Seq.take n die in
+               Seq.for_all (fun (x, y) -> x = y) (Seq.zip sample1 sample2))
 
+(** Using the same random seed results in the same sampler behavior. *)
 let () = add_qcheck @@
-           let () = Random.self_init () in
-           let die = Zar.die 10_000 in
            QCheck.Test.make ~count:1000
-             ~name:"seeding [Random.init] with same seed returns same stream"
+             ~name:"same_seed_same_samplers"
              QCheck.(tup2 (int_range 1 100) (int_range 1 999999))
              (fun (n, seed) ->
-               Random.init seed;
-               let sample1 = take_list n die in
-               Random.init seed;
-               let sample2 = take_list n die in
+               Zar.init seed;
+               let die1 = Zar.die n in
+               let sample1 = die1#gen_n n in
+               Zar.init seed;
+               let die2 = Zar.die n in
+               let sample2 = die2#gen_n n in
                sample1 = sample2)
-
-
-(* let () = *)
-(*   let zs = QCheck.Gen.generate ~n:20 z_gen in *)
-(*   print_endline @@ string_of_list "\n" string_of_z zs *)
 
 (** Run unit tests. *)
 let () = Alcotest.run "zar" [ "zar", !tests ]

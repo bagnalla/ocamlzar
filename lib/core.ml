@@ -42,7 +42,10 @@ let rec run t bs =
   match observe t with
   | RetF x -> x, bs
   | TauF t' -> run t' bs
-  | VisF (_, k) -> run (k (Obj.magic (Seq_ext.first bs))) (Seq_ext.rest bs)
+  | VisF (_, k) ->
+     match Seq.uncons bs with
+     | None -> raise (ZarError "run: out of bits")
+     | Some (b, bs') -> run (k (Obj.magic b)) bs'
 
 let rec run_forever t bs =
   let x, bs' = run t bs in

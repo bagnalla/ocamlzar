@@ -3,9 +3,11 @@ open Internal
 
 (**********************************************************************)
 
-let bits () : bool Seq.t = Seq.forever Random.bool
+let bits () : bool Seq.t = Seq.forever Random.bool |> Seq.memoize
 
-let seed = Random.self_init
+let self_init = Random.self_init
+
+let init = Random.init
 
 let coin_transformer n d bs =
   if n < 0 then
@@ -31,10 +33,26 @@ let findist_transformer weights bs =
     Seq.map int_of_z @@
       run_forever (samplers.findist_sampler @@ List.map z_of_int weights) bs
 
-let coin n d = coin_transformer n d @@ bits ()
+let coin_stream n d = coin_transformer n d @@ bits ()
 
-let die n = die_transformer n @@ bits ()
+let die_stream n = die_transformer n @@ bits ()
 
-let findist weights = findist_transformer weights @@ bits ()
+let findist_stream weights = findist_transformer weights @@ bits ()
 
-include Seq_ext
+class ['a] sampler (init : 'a Seq.t) = object (self)
+  val mutable seq = init
+  method gen () : 'a =
+    match Seq.uncons seq with
+    | None -> raise (ZarError "sampler.gen: out of samples")
+    | Some (x, seq') ->
+       seq <- seq';
+       x
+  method gen_n n : 'a list =
+    List.init n (fun _ -> self#gen ())
+end
+
+let coin n d = coin_stream n d |> new sampler
+
+let die n = die_stream n |> new sampler
+
+let findist weights = findist_stream weights |> new sampler
