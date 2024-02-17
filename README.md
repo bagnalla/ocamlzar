@@ -40,11 +40,12 @@ a coin with bias `p = num / denom`. Internally, the coin is
 constructed as a stream transformer of type `bool Seq.t -> bool Seq.t`
 (see [OCaml's lazy sequence
 library](https://v2.ocaml.org/api/Seq.html)) that transforms an input
-source of fair coin flips into an output stream of biased coin
-flips. The coin transformer is applied to a default source of fair
-coin flips based on the OCaml Random module, and then wrapped in a
-stateful `sampler` object that provides a simplified interface for
-consuming elements from the stream. The following code is equivalent:
+source of fair coin flips (i.e., uniformly distributed random bits)
+into an output stream of biased coin flips. The coin transformer is
+applied to a default source of random bits based on the OCaml Random
+module, and then wrapped in a stateful `sampler` object that provides
+a simplified interface for consuming elements from the stream. The
+following code is equivalent:
 
 ```ocaml
 let bit_stream = Seq.forever Random.bool |> Seq.memoize in
@@ -53,10 +54,12 @@ let coin = new Zar.sampler coin_stream in
 if coin#gen () then a1 else a2
 ```
 
-The user has the option to apply the coin transformer to their own
-source of fair coin flips instead (perhaps one connected to a "true"
-source of randomness such as the [NIST randomness
-beacon](https://csrc.nist.gov/Projects/interoperable-randomness-beacons/beacon-20)).
+You're free to supply your own stream of random bits instead, but
+remember that the coin will have the correct output distribution only
+when the input stream is uniformly distributed. We also recommend
+ensuring that the input stream is *persistent* (see [the Seq module
+documentation](https://v2.ocaml.org/api/Seq.html) for discussion of
+persistent vs. ephemeral sequences).
 
 ### Uniform Sampling
 
