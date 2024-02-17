@@ -48,8 +48,7 @@ stateful `sampler` object that provides a simplified interface for
 consuming elements from the stream. The following code is equivalent:
 
 ```ocaml
-let coin_transformer = Zar.coin_transformer num denom in
-let coin_stream = coin_transformer (Zar.bits ()) in
+let coin_stream = Zar.bits () |> Zar.coin_transformer num denom in
 let coin = new Zar.sampler coin_stream in
 if coin#gen () (* Look at first flip of the coin *)
   then a1 else a2
