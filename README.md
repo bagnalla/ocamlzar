@@ -218,7 +218,7 @@ by `Zar.findist_stream weights`.
 ## Performance and Limitations
 
 The samplers here are optimized for sampling performance at the
-expense of build time. Thus, this library not be ideal if your use
+expense of build time. Thus, this library may not be ideal if your use
 case involves frequent rebuilding due to changes in the samplers'
 parameters (e.g., the coin's bias or the number of sides of the die).
 
