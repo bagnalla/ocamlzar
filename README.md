@@ -1,4 +1,4 @@
-# Zar OCaml: formally verified sampling from discrete probability distributions.
+# Zar for OCaml: formally verified sampling from discrete probability distributions.
 
 See the related [paper](https://arxiv.org/abs/2211.06747) (appeared at
 PLDI'23), [Zar](https://github.com/bagnalla/zar) Coq development, [blog
