@@ -102,8 +102,8 @@ let k = findist#gen () in
 ```
 
 For example, `Zar.findist [1; 3; 2]` builds a sampler that draws
-integers from the set `{0, 1, 2}` with `Pr(0) = 1/6`, `Pr(1) = 1/2`,
-and `Pr(2) = 1/3`.
+integers from the set `{0, 1, 2}` with `Pr(0) = 1/6`, `Pr(1) = 3/6 = 1/2`,
+and `Pr(2) = 2/6 = 1/3`.
 
 ## Trusted Computing Base
 
