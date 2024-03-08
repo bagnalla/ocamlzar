@@ -18,12 +18,12 @@ if Random.float 1.0 < p then a1 else a2
 ```
 
 where `p` is a float in the range `[0,1]` and `Random.float 1.0`
-produces a random float in the range `[0,1)`. While good enough for
-many applications, this approach is not always correct due to float
-roundoff error. We can only expect `a1` to be executed with
+draws a uniform random float from the range `[0,1)`. While good enough for
+many applications, this approach is not always correct due to floating point
+rounding error. We can only expect `a1` to be executed with
 probability `p + ϵ` for some small error term `ϵ`, which technically
-invalidates any correctness guarantee of our overall system that
-depends on the correctness of its probabilistic choices.
+invalidates any correctness guarantees of our overall system that
+depend on the correctness of its probabilistic choices.
 
 Zar provides an alternative that is formally proved (in Coq) to
 execute `a1` with probability `p` (where `num` and `denom` are integers such
